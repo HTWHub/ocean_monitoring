@@ -2,6 +2,7 @@
 
 ## Features
  - Multi-node elastic search cluster
+ - Kibana 
 
 ## Getting started
 
@@ -15,6 +16,8 @@ Submit a `_cat/nodes` request to see that the nodes are up and running:
 curl -X GET "localhost:9200/_cat/nodes?v=true&pretty"
 ```
 
+Kibana should be available 
+[http://localhost:5601](http://localhost:5601)
 
 # Resolved issues
 
