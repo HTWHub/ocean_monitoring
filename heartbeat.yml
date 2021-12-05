@@ -1,0 +1,27 @@
+# https://www.elastic.co/guide/en/beats/heartbeat/current/heartbeat-reference-yml.html
+
+heartbeat.monitors:
+- type: icmp
+  schedule: '@every 60s'
+  hosts: ["kibana", "es01", "es02"]
+  ipv4: true
+  ipv6: true
+  mode: any
+  timeout: 16s
+  wait: 1s
+- type: http
+  enabled: true
+  schedule: '@every 60s'
+  urls: ["http://kibana:5601"]
+  ipv4: true
+  ipv6: true
+  mode: any
+  timeout: 5s
+  check.request:
+    method: "GET"
+  check.response:
+    status: 200
+
+output.elasticsearch:
+  hosts: ["es01:9200"]
+logging.to_files: false

@@ -1,8 +1,9 @@
 version: "3"
 services:
   es01:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
     container_name: es01
+    hostname: es01
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
     environment:
       - node.name=es01
       - cluster.name=es-cluster-7
@@ -24,8 +25,9 @@ services:
       - es-network
 
   es02:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
     container_name: es02
+    hostname: es02
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
     environment:
       - node.name=es02
       - cluster.name=es-cluster-7
@@ -45,6 +47,8 @@ services:
       - es-network
 
   kibana:
+    container_name: kibana
+    hostname: kibana
     image: "docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
     environment:
       - ELASTICSEARCH_HOSTS=http://es01:9200
@@ -58,6 +62,21 @@ services:
       - es-network
     depends_on:
       - es01
+
+  heartbeat:
+    container_name: heartbeat
+    hostname: heartbeat
+    image: "docker.elastic.co/beats/heartbeat:${ELASTIC_VERSION}"
+    volumes:
+      - ./heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+    depends_on:
+      - es01
+    environment:
+      - "ES_PASSWORD=${ELASTIC_PASSWORD}"
+    command: heartbeat -e -E output.elasticsearch.username=elastic -E output.elasticsearch.password=${ELASTIC_PASSWORD} -strict.perms=false
+    networks: 
+      - es-network
+    restart: on-failure    
 
 volumes:
   es-data01:
