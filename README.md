@@ -3,6 +3,7 @@
 ## Features
  - Multi-node elastic search cluster
  - Kibana 
+ - Jira
 
 ## Getting started
 
