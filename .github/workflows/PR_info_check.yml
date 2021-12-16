@@ -1,0 +1,38 @@
+name: 'PR Info Check'
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    branches:
+      - develop
+      - master
+
+jobs:
+  check-commit-message:
+    name: Check Commit Message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR JIRA reference
+        uses: gsactions/commit-message-checker@v1
+        with:
+          pattern: '^(\[WIP\] )?((OCPL-\d+)|(IS-00)).*$'
+          error: 'Pull Request name must start with a JIRA ticket reference'
+          flags: 's'
+          excludeDescription: 'true'
+          excludeTitle: 'false'
+          checkAllCommitMessages: 'false'
+      - name: Check Commit Type
+        uses: gsactions/commit-message-checker@v1
+        with:
+          pattern: '^(feat|fix|docs|style|refactor|test|chore): .*$'
+          error: 'Commit message first line must contain one of the following commit types: feat, fix, docs, style, refactor, test, chore.'
+          flags: 's'
+          excludeDescription: 'true'
+          excludeTitle: 'true'
+          checkAllCommitMessages: 'true'
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
+
+      
