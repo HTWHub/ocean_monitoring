@@ -148,3 +148,91 @@ Other Options for basic search
 | GET /university/student,teacher/_search | Search only for university index and (student or teacher) type |
 | GET /u\*,c\*/_search                    | Search only for an index beginning with u or c and every type |
 
+## View the Mapping
+
+Retrieve the mapping for type student in index university
+
+```json
+GET /university/_mapping/student?include_type_name=true
+{
+  "university" : {
+    "mappings" : {
+      "student" : {
+        "properties" : {
+          "age" : {
+            "type" : "long"
+          },
+          "course" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "degree" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+        }
+      }
+    }
+  }
+}
+```
+
+## Update a Mapping
+
+Partial update a field for type student in index university
+
+```json
+PUT /university/_mapping/student?include_type_name=true
+{
+  "properties": {
+    "degree": {
+      "type": "text"
+    }
+  }
+}
+```
+
+## Analyzer
+
+Analyze full-text
+
+```json
+POST _analyze
+{
+  "analyzer": "standard",
+  "text": "The student is out of control."
+}
+```
+
+and retrieve following response (short version)
+
+```json
+{
+  "tokens" : [
+    {
+      "token" : "the",
+      "start_offset" : 0,
+      "end_offset" : 3,
+      "type" : "<ALPHANUM>",
+      "position" : 0
+    },
+    {
+      "token" : "student",
+      "start_offset" : 4,
+      "end_offset" : 11,
+      "type" : "<ALPHANUM>",
+      "position" : 1
+    }
+}
+```
+
