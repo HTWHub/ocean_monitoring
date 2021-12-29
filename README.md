@@ -371,3 +371,16 @@ GET _search
   }
 }
 ```
+
+## Aggregation DSL
+
+Average age of students
+
+```json
+GET /university/student/_search
+{
+  "aggs": {
+    "avg_grade": { "avg": { "field": "age" } }
+  }
+}
+```
