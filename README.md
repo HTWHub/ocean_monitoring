@@ -236,3 +236,138 @@ and retrieve following response (short version)
 }
 ```
 
+## Query DSL
+
+### Term filter
+
+Filter by exact values
+
+```json
+GET /_search
+{
+ "query": {
+   "term": {
+     "age": {
+       "value": 28
+     }
+   }
+ }
+}
+```
+
+### Terms filter
+
+Specify multiple values
+
+```json
+GET /_search
+{
+ "query": {
+   "terms": {
+     "age": [18, 28, 38]
+   }
+ }
+}
+```
+
+### Range filter
+Define a range with:
+- gte, gt
+- lte, lt
+
+```json
+GET /_search
+{
+ "query": {
+   "range": {
+     "age": {
+       "gte": 18,
+       "lte": 40
+     }
+   }
+ }
+}
+```
+
+### Match Query
+
+Search for phrase in a single field.
+
+```json
+GET /_search
+{
+ "query": {
+   "match": {
+    "name": "bob"
+   }
+ }
+}
+```
+
+### Multi Match Query
+
+Search for phrease in multiple fields.
+
+```json
+GET /_search
+{
+ "query": {
+   "multi_match": {
+    "fields": ["name", "email"],
+    "query": "bob"
+   }
+ }
+}
+```
+
+### Combine multiple clauses
+
+Combine multiple match operators with clauses:
+
+- must
+- should
+- must_not
+
+```json
+GET /_search
+{
+ "query": {
+   "bool": {
+     "must": [
+       {
+        "match": { "name": "bob" }
+       }
+     ],
+     "should": [
+       {
+         "match": { "age": 28 }
+       }
+     ]
+   }
+ }
+}
+```
+
+### Combining Queries with Filters
+
+Deprecated `filtered` is replaced by `bool` operator.
+
+```json
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "name": "bob"
+        }
+      },
+      "filter": {
+        "term": {
+          "age": 28
+        }
+      }
+    }
+  }
+}
+```
