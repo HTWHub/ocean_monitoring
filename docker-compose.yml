@@ -62,6 +62,7 @@ services:
       - es-network
     depends_on:
       - es01
+      - es02
 
   heartbeat:
     container_name: heartbeat
@@ -71,12 +72,34 @@ services:
       - ./heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
     depends_on:
       - es01
+      - es02
     environment:
       - "ES_PASSWORD=${ELASTIC_PASSWORD}"
-    command: heartbeat -e -E output.elasticsearch.username=elastic -E output.elasticsearch.password=${ELASTIC_PASSWORD} -strict.perms=false
+    command: heartbeat -e -strict.perms=false
     networks: 
       - es-network
-    restart: on-failure    
+    restart: on-failure
+  
+  logstash:
+    container_name: logstash
+    hostname: logstash
+    image: "docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    networks:
+      - es-network
+    depends_on:
+      - es01
+      - es02
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    restart: on-failure
 
 volumes:
   es-data01:
