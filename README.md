@@ -384,3 +384,34 @@ GET /university/student/_search
   }
 }
 ```
+
+# Logstash
+
+A Logstash config file has a separate section for each type of plugin you want to add to the event processing pipeline.
+
+```
+input {}
+filter {}
+output {}
+```
+
+## Plugins configuration
+
+The configuration of a plugin consists of the plugin name followed by a block of settings for that plugin.
+
+```
+input {
+  file {
+    path => "/var/log/messages"
+    type => "syslog"
+  }
+
+  file {
+    path => "/var/log/apache/access.log"
+    type => "apache"
+  }
+}
+```
+
+See [Input Plugins](https://www.elastic.co/guide/en/logstash/current/input-plugins.html), [Output Plugins](https://www.elastic.co/guide/en/logstash/current/output-plugins.html), [Filter Plugins](https://www.elastic.co/guide/en/logstash/current/filter-plugins.html), and [Codec Plugins](https://www.elastic.co/guide/en/logstash/current/codec-plugins.html).
+
