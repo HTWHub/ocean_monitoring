@@ -415,3 +415,17 @@ input {
 
 See [Input Plugins](https://www.elastic.co/guide/en/logstash/current/input-plugins.html), [Output Plugins](https://www.elastic.co/guide/en/logstash/current/output-plugins.html), [Filter Plugins](https://www.elastic.co/guide/en/logstash/current/filter-plugins.html), and [Codec Plugins](https://www.elastic.co/guide/en/logstash/current/codec-plugins.html).
 
+# Docker
+
+OS-level virtualization to deliver software in packages called containers
+
+## Docker Registry
+
+Store named Docker Images on a public or private registry.
+
+| Command                                   | Description                                                  |
+| ----------------------------------------- | ------------------------------------------------------------ |
+| docker pull ubuntu                        | Pull an image named `ubuntu` from the official Docker Hub (short form) |
+| docker pull docker.io/library/ubuntu      | Pull an image named `ubuntu` from the official Docker Hub (longform) |
+| docker pull myregistrydomain:port/foo/bar | Pull an image named `foor/bar` from the private registry `myregistrydomain` |
+
