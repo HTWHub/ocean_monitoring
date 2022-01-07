@@ -30,6 +30,22 @@ wsl -d docker-desktop // windows
 sysctl -w vm.max_map_count=262144
 ```
 
+ERROR [internal] load metadata for docker.io/library/node:alpline
+
+see [docker forum](https://forums.docker.com/t/strange-docker-output-or-help-me-please-im-very-noob/100788)
+
+```
+You have buildkit enabled and need to disable it.
+If you are using Docker Desktop, open the preferences and navigate to “Docker Engine”.
+Set buildkit to false and click “Apply and Restart”.
+{
+“features”: {
+“buildkit”: false
+},
+“experimental”: false
+}
+```
+
 # Elasticsearch
 
 ## Indexing Documents
@@ -418,6 +434,29 @@ See [Input Plugins](https://www.elastic.co/guide/en/logstash/current/input-plugi
 # Docker
 
 OS-level virtualization to deliver software in packages called containers
+
+## Docker File
+
+Dockerfile specifies OS layer and execution commands. 
+
+```yaml
+FROM node:14-alpine
+WORKDIR '/app'
+COPY package.json .
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+Build and Image from Dockerfile with `docker build -t ocean/express-example` . Verify image with `docker images` and get following output:
+
+```
+REPOSITORY                                      TAG         IMAGE ID       CREATED              SIZE
+ocean/express-example                           latest      a301eea7bbe9   29 seconds ago   123MB
+```
+
+Run image with `docker run -p 3000:3000 ocean/express-example`
 
 ## Docker Registry
 
