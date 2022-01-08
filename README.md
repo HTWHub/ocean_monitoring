@@ -458,6 +458,101 @@ ocean/express-example                           latest      a301eea7bbe9   29 se
 
 Run image with `docker run -p 3000:3000 ocean/express-example`
 
+## Docker Compose
+
+Run multiple Docker Container with Docker Compose
+
+- include a Dockerfile 
+- include an image from registry
+- port mapping
+- run cycle dependencies
+- Volumes and Bind Mounts
+- create and share internal networks
+
+```yaml
+version: "3"
+services:
+	redis-server
+		container_name: redis-server
+		hostname: redis-server
+	 	image: 'redis'
+	express:
+        container_name: express
+        hostname: express
+        build: express/
+        ports:
+         - "3000:3000"
+        depends_on:
+      		- redis-server
+```
+
+In order provide an own internal network for those containers, use a network bridge.
+
+```yaml
+version: "3"
+services:
+	express:
+        container_name: express
+        hostname: express
+        build: express/
+        ports:
+         - "3000:3000"
+       networks:
+      	- es-network
+networks:
+  es-network:
+    driver: bridge
+```
+
+Verify internal network with CLI command `docker network ls`
+
+```
+NETWORK ID     NAME                          DRIVER    SCOPE
+2427c61c22ed   bridge                        bridge    local
+```
+
+Share data with **Bind Mounting** and **Volumes**
+
+With Bind Mount, a file or directory on the *host machine* is mounted into a container. 
+
+```yaml
+heartbeat:
+    container_name: heartbeat
+    hostname: heartbeat
+    image: "docker.elastic.co/beats/heartbeat:${ELASTIC_VERSION}"
+    volumes:
+      - ./heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+```
+
+With Volume, a new directory is created within Docker's storage directory on the host machine, and Docker manages that directory's content. Volumes can be easily shared over multiple containers.
+
+```yaml
+version: "3"
+services:
+  es01:
+    container_name: es01
+    hostname: es01
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
+    volumes:
+      - es-data01:/usr/share/elasticsearch/data
+volumes:
+  es-data01:
+    driver: local
+  es-data02:
+    driver: local
+```
+
+Control those container life cycles with following commands
+
+| Command                | Description                       |
+| ---------------------- | --------------------------------- |
+| docker compose up  -d  | Start containers in detached mode |
+| docker compose down    | Stop containers                   |
+| docker ps              | List containers                   |
+| docker pause [unpause] | Pause or unpause containers       |
+
+
+
 ## Docker Registry
 
 Store named Docker Images on a public or private registry.
