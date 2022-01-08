@@ -100,6 +100,13 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     restart: on-failure
+  
+  express:
+    container_name: express
+    hostname: express
+    build: express/
+    ports:
+     - "3000:3000"
 
 volumes:
   es-data01:
