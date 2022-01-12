@@ -558,6 +558,8 @@ Control those container life cycles with following commands
 | docker ps              | List containers                   |
 | docker pause [unpause] | Pause or unpause containers       |
 
+Validate Docker Compose file with `docker-compose -f docker-compose.yml config`
+
 ## Docker Registry
 
 Store named Docker Images on a public or private registry.
@@ -567,3 +569,7 @@ Store named Docker Images on a public or private registry.
 | docker pull ubuntu                        | Pull an image named `ubuntu` from the official Docker Hub (short form)      |
 | docker pull docker.io/library/ubuntu      | Pull an image named `ubuntu` from the official Docker Hub (longform)        |
 | docker pull myregistrydomain:port/foo/bar | Pull an image named `foor/bar` from the private registry `myregistrydomain` |
+
+## Docker Container
+
+List all container with `docker container ls -a`.

@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
+    environment:
+      - "ES_JAVA_OPTS=-Xms724m -Xmx724m"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks: 
+      - elk-network
+
+volumes:
+  es-data:
+    driver: local
+
+networks:
+  elk-network:
+    driver: bridge
