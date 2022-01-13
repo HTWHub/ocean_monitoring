@@ -29,6 +29,8 @@ services:
     hostname: logstash
     restart: unless-stopped
     image: "docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
+    depends_on:
+      - elasticsearch
     environment:
       - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
       - "xpack.monitoring.elasticsearch.username=elastic"
@@ -38,8 +40,6 @@ services:
       - ./pipeline:/usr/share/logstash/pipeline
     networks:
       - elk-network
-    depends_on:
-      - elasticsearch
     ports:
       - "5044:5044"
       - "5000:5000/tcp"
@@ -51,6 +51,8 @@ services:
     hostname: kibana
     restart: unless-stopped
     image: "docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
+    depends_on:
+      - elasticsearch
     environment:
       - ELASTICSEARCH_USERNAME=elastic
       - "ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}"
@@ -60,9 +62,43 @@ services:
       - "5601:5601"
     volumes:
       - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml  
+
+  metricbeat:
+    container_name: metricbeat
+    hostname: metricbeat
+    restart: unless-stopped
+    image: "docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}"
     depends_on:
       - elasticsearch
-
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+      - --system.hostfs=/hostfs
+    networks:
+      - elk-network
+    volumes:
+      - type: bind
+        source: ./config/metricbeat.yml
+        target: /usr/share/metricbeat/metricbeat.yml
+        read_only: true
+      - type: bind
+        source: /
+        target: /hostfs
+        read_only: true
+      - type: bind
+        source: /sys/fs/cgroup
+        target: /hostfs/sys/fs/cgroup
+        read_only: true
+      - type: bind
+        source: /proc
+        target: /hostfs/proc
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    
 volumes:
   es-data:
     driver: local
