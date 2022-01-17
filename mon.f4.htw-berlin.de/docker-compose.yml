@@ -1,0 +1,108 @@
+version: '3.8'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    image: "docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
+    environment:
+      - "ES_JAVA_OPTS=-Xms724m -Xmx724m"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks: 
+      - elk-network
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    container_name: logstash
+    hostname: logstash
+    restart: unless-stopped
+    image: "docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
+    depends_on:
+      - elasticsearch
+    environment:
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "xpack.monitoring.elasticsearch.username=elastic"
+      - "xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}"
+    volumes:
+      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./pipeline:/usr/share/logstash/pipeline
+    networks:
+      - elk-network
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+
+  kibana:
+    container_name: kibana
+    hostname: kibana
+    restart: unless-stopped
+    image: "docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - "ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}"
+    networks:
+      - elk-network  
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml  
+
+  metricbeat:
+    container_name: metricbeat
+    hostname: metricbeat
+    restart: unless-stopped
+    image: "docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}"
+    depends_on:
+      - elasticsearch
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+      - --system.hostfs=/hostfs
+    networks:
+      - elk-network
+    volumes:
+      - type: bind
+        source: ./config/metricbeat.yml
+        target: /usr/share/metricbeat/metricbeat.yml
+        read_only: true
+      - type: bind
+        source: /
+        target: /hostfs
+        read_only: true
+      - type: bind
+        source: /sys/fs/cgroup
+        target: /hostfs/sys/fs/cgroup
+        read_only: true
+      - type: bind
+        source: /proc
+        target: /hostfs/proc
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    
+volumes:
+  es-data:
+    driver: local
+
+networks:
+  elk-network:
+    driver: bridge
