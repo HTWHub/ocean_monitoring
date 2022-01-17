@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    restart: unless-stopped
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./postgres/postgresql.docker.conf:/etc/postgresql/postgresql.conf
+      - ./postgres/data/:/var/lib/postgresql/data:rw
+      - pg-log-data:/var/log/postgresql/:rw
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    networks:
+      - psql-network
+    ports:
+      - "5432:5432"
+      
+volumes:
+  pg-log-data:
+    driver: local
+
+networks:
+  psql-network:
+    driver: bridge

@@ -125,3 +125,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# domain specific
+psql.f4.htw-berlin.de/postgres/data
