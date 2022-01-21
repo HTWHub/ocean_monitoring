@@ -1,0 +1,54 @@
+metricbeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    # Reload module configs as they change:
+    reload.enabled: false
+
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+metricbeat.modules:
+  - module: docker
+    metricsets:
+      - "container"
+      - "cpu"
+      - "diskio"
+      - "event"
+      - "healthcheck"
+      - "info"
+      - "image"
+      - "memory"
+      - "network"
+    hosts: ["unix:///var/run/docker.sock"]
+    period: 10s
+    enabled: true
+
+  - module: postgresql
+    hosts: ["postgres://192.168.2.100:5432?sslmode=disable"]
+    metricsets:
+      - database
+      - bgwriter
+      - activity
+      - statement
+    period: 10s
+    enabled: true
+    username: postgres
+    password: postgres
+
+processors:
+  - add_cloud_metadata: ~
+
+output.elasticsearch:
+  #hosts: ["http://192.168.2.100:9200"]
+  hosts: ["http://${ELASTIC_HOSTS}"]
+  username: elastic
+  password: "${ELASTIC_PASSWORD}"
+
+#setup.kibana:
+#host: "192.168.2.100:5601"
+#host: "${KIB_HOST}"
+
+http.enabled: true
+http.host: 0.0.0.0
