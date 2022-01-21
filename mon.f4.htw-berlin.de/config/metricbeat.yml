@@ -18,7 +18,7 @@ metricbeat.modules:
       - "diskio"
       - "healthcheck"
       - "info"
-      #- "image"
+      - "image"
       - "memory"
       - "network"
     hosts: ["unix:///var/run/docker.sock"]
@@ -29,9 +29,10 @@ processors:
   - add_cloud_metadata: ~
 
 output.elasticsearch:
-  hosts: ["http://elasticsearch:9200"]
+  #hosts: ["http://elasticsearch:9200"]
+  hosts: ["http://${ELASTIC_HOSTS}"]
   username: elastic
-  password: changeme
+  password: "${ELASTIC_PASSWORD}"
 
 http.enabled: true
 http.host: 0.0.0.0
