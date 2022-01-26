@@ -1,0 +1,21 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+filebeat.modules:
+  - module: postgresql
+    log:
+      enabled: true
+      var.paths: ["/var/log/postgresql/*.log"]
+
+processors:
+  - add_cloud_metadata: ~
+
+setup.kibana:
+  host: "${KIBANA_HOST}"
+
+output.elasticsearch:
+  hosts: ["http://192.168.2.100:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"

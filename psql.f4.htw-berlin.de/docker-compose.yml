@@ -30,6 +30,7 @@ services:
     environment:
       - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
       - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
+      - "KIBANA_HOST=${KIBANA_HOST}"
     volumes:
       - type: bind
         source: ./metricbeat/config/metricbeat.yml
@@ -51,6 +52,28 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+    networks:
+      - psql-network
+    depends_on:
+      - postgres
+
+  psql-filebeat:
+    container_name: psql-filebeat
+    hostname: psql-filebeat
+    image: "docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}"
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+    environment:
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
+      - "KIBANA_HOST=${KIBANA_HOST}"
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - pg-log-data:/var/log/postgresql/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - psql-network
     depends_on:

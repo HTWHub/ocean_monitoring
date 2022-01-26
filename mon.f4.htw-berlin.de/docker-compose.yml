@@ -80,6 +80,7 @@ services:
     environment:
       - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
       - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
+      - "KIBANA_HOST=${KIBANA_HOST}"
     networks:
       - elk-network
     volumes:

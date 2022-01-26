@@ -31,7 +31,7 @@ metricbeat.modules:
       - database
       - bgwriter
       - activity
-      - statement
+      # - statement
     period: 10s
     enabled: true
     username: postgres
@@ -40,15 +40,13 @@ metricbeat.modules:
 processors:
   - add_cloud_metadata: ~
 
+setup.kibana:
+  host: "${KIBANA_HOST}"
+
 output.elasticsearch:
-  #hosts: ["http://192.168.2.100:9200"]
   hosts: ["http://${ELASTIC_HOSTS}"]
   username: elastic
   password: "${ELASTIC_PASSWORD}"
-
-#setup.kibana:
-#host: "192.168.2.100:5601"
-#host: "${KIB_HOST}"
 
 http.enabled: true
 http.host: 0.0.0.0
