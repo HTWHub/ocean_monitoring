@@ -24,15 +24,16 @@ services:
       - "9200:9200"
       - "9300:9300"
 
-  logstash:
-    container_name: logstash
-    hostname: logstash
+  logstash-mon:
+    container_name: logstash-mon
+    hostname: logstash-mon
     restart: unless-stopped
     image: "docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
     depends_on:
       - elasticsearch
     environment:
       - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "xpack.monitoring.elasticsearch.hosts=${ELASTIC_HOSTS}"
       - "xpack.monitoring.elasticsearch.username=elastic"
       - "xpack.monitoring.elasticsearch.password=${ELASTIC_PASSWORD}"
     volumes:
@@ -54,6 +55,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
+      - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
       - ELASTICSEARCH_USERNAME=elastic
       - "ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}"
     networks:
@@ -63,9 +65,9 @@ services:
     volumes:
       - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml  
 
-  metricbeat:
-    container_name: metricbeat
-    hostname: metricbeat
+  metricbeat-mon:
+    container_name: metricbeat-mon
+    hostname: metricbeat-mon
     restart: unless-stopped
     image: "docker.elastic.co/beats/metricbeat:${ELASTIC_VERSION}"
     depends_on:
@@ -75,6 +77,10 @@ services:
       - -e
       - --strict.perms=false
       - --system.hostfs=/hostfs
+    environment:
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
+      - "KIBANA_HOST=${KIBANA_HOST}"
     networks:
       - elk-network
     volumes:

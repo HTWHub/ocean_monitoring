@@ -1,4 +1,3 @@
-# https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-reference-yml.html
 metricbeat.config:
   modules:
     path: ${path.config}/modules.d/*.yml
@@ -16,6 +15,7 @@ metricbeat.modules:
       - "container"
       - "cpu"
       - "diskio"
+      - "event"
       - "healthcheck"
       - "info"
       - "image"
@@ -24,6 +24,18 @@ metricbeat.modules:
     hosts: ["unix:///var/run/docker.sock"]
     period: 10s
     enabled: true
+
+  - module: postgresql
+    hosts: ["postgres://${POSTGRES_HOSTS}?sslmode=disable"]
+    metricsets:
+      - database
+      - bgwriter
+      - activity
+      # - statement
+    period: 10s
+    enabled: true
+    username: "${POSTGRES_USER}"
+    password: "${POSTGRES_PASSWORD}"
 
 processors:
   - add_cloud_metadata: ~
