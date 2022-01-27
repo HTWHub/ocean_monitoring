@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  ocean-backend:
+    build:
+      context: backend/
+    container_name: ocean-backend
+    hostname: ocean-backend
+    restart: unless-stopped
+    networks:
+      - ocean-network
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+      - "9443:9443"
+
+networks:
+  ocean-network:
+    driver: bridge
