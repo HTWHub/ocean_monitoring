@@ -31,6 +31,9 @@ services:
       - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
       - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
       - "KIBANA_HOST=${KIBANA_HOST}"
+      - "POSTGRES_HOST=${POSTGRES_HOST}"
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
     volumes:
       - type: bind
         source: ./metricbeat/config/metricbeat.yml

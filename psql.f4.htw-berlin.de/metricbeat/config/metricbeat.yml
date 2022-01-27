@@ -26,7 +26,7 @@ metricbeat.modules:
     enabled: true
 
   - module: postgresql
-    hosts: ["postgres://192.168.2.100:5432?sslmode=disable"]
+    hosts: ["postgres://${POSTGRES_HOSTS}?sslmode=disable"]
     metricsets:
       - database
       - bgwriter
@@ -34,8 +34,8 @@ metricbeat.modules:
       # - statement
     period: 10s
     enabled: true
-    username: postgres
-    password: postgres
+    username: "${POSTGRES_USER}"
+    password: "${POSTGRES_PASSWORD}"
 
 processors:
   - add_cloud_metadata: ~
