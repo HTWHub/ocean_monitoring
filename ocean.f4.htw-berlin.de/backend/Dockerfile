@@ -1,6 +1,10 @@
 FROM ubuntu:21.10
 ENV SBT_VERSION=1.5.0
 
+EXPOSE 8080
+EXPOSE 9000
+EXPOSE 9443
+
 # Install jdk
 RUN apt-get update -y
 RUN apt-get install software-properties-common -y
@@ -21,3 +25,7 @@ RUN chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
 RUN apt-get update -y
 RUN apt-get install sbt -y
 
+# Play
+WORKDIR '/app'
+COPY play-with-logback ./
+CMD ["sbt", "run"] 
