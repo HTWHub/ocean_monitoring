@@ -31,12 +31,24 @@
     <appender-ref ref="STDOUT" />
   </appender>
 
+  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashAccessUdpSocketAppender">
+    <host>192.168.2.100</host>
+    <!-- port is optional (default value shown) -->
+    <port>5000</port>
+
+    <!-- layout is required -->
+    <layout class="net.logstash.logback.layout.LogstashLayout">
+      <customFields>{"appname":"play-with-logback"}</customFields>
+    </layout>
+  </appender>
+
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 
   <root level="WARN">
     <appender-ref ref="ASYNCFILE" />
     <appender-ref ref="ASYNCSTDOUT" />
+    <appender-ref ref="LOGSTASH" />
   </root>
 
 </configuration>
