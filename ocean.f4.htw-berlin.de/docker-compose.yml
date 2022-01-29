@@ -9,9 +9,46 @@ services:
     networks:
       - ocean-network
     ports:
-      - "8080:8080"
       - "9000:9000"
       - "9443:9443"
+
+  ocean-apache:
+    container_name: ocean-apache
+    hostname: ocean-apache
+    image: ubuntu/apache2
+    restart: unless-stopped
+    volumes:
+      - apache-log-data:/var/log/apache2/:rw
+    networks:
+      - ocean-network
+    ports:
+      - "8080:80"
+
+  ocean-filebeat:
+    container_name: ocean-filebeat
+    hostname: ocean-filebeat
+    image: "docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}"
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+    environment:
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
+      - "ELASTIC_HOSTS=${ELASTIC_HOSTS}"
+      - "KIBANA_HOST=${KIBANA_HOST}"
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - apache-log-data:/var/log/apache2/:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ocean-network
+    depends_on:
+      - ocean-apache
+
+volumes:
+  apache-log-data:
+    driver: local
 
 networks:
   ocean-network:

@@ -1,0 +1,24 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+filebeat.modules:
+  - module: apache2
+    access:
+      enabled: true
+      var.paths: ["/var/log/apache2/access.log*"]
+    error:
+      enabled: true
+      var.paths: ["/var/log/apache2/error.log*"]
+
+processors:
+  - add_cloud_metadata: ~
+
+setup.kibana:
+  host: "${KIBANA_HOST}"
+
+output.elasticsearch:
+  hosts: ["http://${ELASTIC_HOSTS}"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
