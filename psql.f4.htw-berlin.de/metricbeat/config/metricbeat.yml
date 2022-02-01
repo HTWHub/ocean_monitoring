@@ -26,7 +26,7 @@ metricbeat.modules:
     enabled: true
 
   - module: postgresql
-    hosts: ["postgres://${POSTGRES_HOSTS}?sslmode=disable"]
+    hosts: ["postgres://${POSTGRES_HOST}?sslmode=disable"]
     metricsets:
       - database
       - bgwriter
@@ -39,6 +39,8 @@ metricbeat.modules:
 
 processors:
   - add_cloud_metadata: ~
+
+setup.dashboards.enabled: true
 
 setup.kibana:
   host: "${KIBANA_HOST}"

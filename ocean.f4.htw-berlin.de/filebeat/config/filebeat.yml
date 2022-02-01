@@ -4,10 +4,13 @@ filebeat.autodiscover:
       hints.enabled: true
 
 filebeat.modules:
-  - module: postgresql
-    log:
+  - module: apache2
+    access:
       enabled: true
-      var.paths: ["/var/log/postgresql/*.log"]
+      var.paths: ["/var/log/apache2/access.log*"]
+    error:
+      enabled: true
+      var.paths: ["/var/log/apache2/error.log*"]
 
 processors:
   - add_cloud_metadata: ~
@@ -18,6 +21,6 @@ setup.kibana:
   host: "${KIBANA_HOST}"
 
 output.elasticsearch:
-  hosts: ["http://192.168.2.100:9200"]
+  hosts: ["http://${ELASTIC_HOSTS}"]
   username: "elastic"
   password: "${ELASTIC_PASSWORD}"
