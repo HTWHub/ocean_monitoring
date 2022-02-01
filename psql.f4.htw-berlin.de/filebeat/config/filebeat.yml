@@ -12,6 +12,8 @@ filebeat.modules:
 processors:
   - add_cloud_metadata: ~
 
+setup.dashboards.enabled: true
+
 setup.kibana:
   host: "${KIBANA_HOST}"
 
