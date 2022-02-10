@@ -12,6 +12,15 @@ services:
       - "9090:9090"
       - "996:996"
 
+  prom-node-exporter:
+    image: prom/node-exporter
+    container_name: prom-node-exporter
+    hostname: prom-node-exporter
+    networks:
+      - prom-network
+    ports:
+      - "9100:9100"
+
 volumes:
     prometheus_data: {}
     grafana_data: {}
