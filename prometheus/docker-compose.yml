@@ -21,6 +21,18 @@ services:
     ports:
       - "9100:9100"
 
+  prom-grafana:
+    image: grafana/grafana
+    container_name: prom-grafana
+    hostname: prom-grafana
+    networks:
+      - prom-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prom-prometheus
+
+
 volumes:
     prometheus_data: {}
     grafana_data: {}
