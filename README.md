@@ -573,3 +573,34 @@ Store named Docker Images on a public or private registry.
 ## Docker Container
 
 List all container with `docker container ls -a`.
+
+# Prometheus
+
+Selector and matchers:
+
+- Equality Matcher
+- Negativ Equality Matcher
+- Regular expression Matcher
+
+```
+process_cpu_seconds_total{job=’node’}
+process_cpu_seconds_total{job!=’node’}
+Process_cpu_seconds_total{job=~”nod*”}
+```
+
+Operator
+
+- +, -, \*, /, %, ^
+
+```
+{instance="prom-node-exporter:9100", job="node"} / 10
+```
+
+Aggregation Operator
+
+- sum, min, max, topk, avg, stddev, count
+
+```
+sum(prometheus_http_requests_total{code="200", job="prometheus"})
+sum(prometheus_http_requests_total) by (code)
+```
