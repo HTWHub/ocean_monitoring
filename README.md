@@ -604,3 +604,12 @@ Aggregation Operator
 sum(prometheus_http_requests_total{code="200", job="prometheus"})
 sum(prometheus_http_requests_total) by (code)
 ```
+
+## Python counter app
+
+Getting started
+
+```
+source venv/bin/activate
+python counter.py
+```

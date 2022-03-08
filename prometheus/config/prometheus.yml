@@ -22,3 +22,8 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: ["prom-node-exporter:9100"]
+
+  - job_name: "prom_python_app"
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["192.168.2.100:8001"]
