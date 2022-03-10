@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   prom-prometheus:
     image: prom/prometheus
@@ -32,10 +32,9 @@ services:
     depends_on:
       - prom-prometheus
 
-
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
+  prometheus_data: {}
+  grafana_data: {}
 
 networks:
   prom-network:
