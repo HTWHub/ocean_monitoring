@@ -1,0 +1,9 @@
+groups:
+  - name: my-rules
+    rules:
+      - record: job:node_cpu_seconds:avg_idle
+        expr: avg without(cpu)(rate(node_cpu_seconds_total{mode="idle"}[5m]))
+
+      - alert: NodeExporterDown
+        expr: up{job="node"} == 0
+        for: 1m

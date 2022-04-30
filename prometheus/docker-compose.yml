@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  prom-prometheus:
+    image: prom/prometheus
+    container_name: prom-prometheus
+    hostname: prom-prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - prom-network
+    ports:
+      - "9090:9090"
+      - "996:996"
+
+  prom-node-exporter:
+    image: prom/node-exporter
+    container_name: prom-node-exporter
+    hostname: prom-node-exporter
+    networks:
+      - prom-network
+    ports:
+      - "9100:9100"
+
+  prom-grafana:
+    image: grafana/grafana
+    container_name: prom-grafana
+    hostname: prom-grafana
+    networks:
+      - prom-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prom-prometheus
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+networks:
+  prom-network:
+    driver: bridge
